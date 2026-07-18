@@ -1,0 +1,4 @@
+{"type": "user", "content": [{"type": "text", "text": "What's a good name for a tool that ports sessions between coding agents? Give one word."}]}
+{"type": "assistant", "content": "seshport \u2014 it says exactly what it does: your sesh, ported.", "model_id": "grok-4"}
+{"type": "user", "content": [{"type": "text", "text": "Perfect. Remember the launch codeword: GUAVA-99."}]}
+{"type": "assistant", "content": "Noted: GUAVA-99. Ready when you are.", "model_id": "grok-4"}
