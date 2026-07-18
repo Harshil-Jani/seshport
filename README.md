@@ -123,6 +123,21 @@ open [`docs/architecture.excalidraw`](docs/architecture.excalidraw) at [excalidr
   rejects sessions without the official instructions.
 - Every import starts with an attribution message noting the source session and this tool.
 
+## But can't I just paste the context across?
+
+You can, the same way you can deploy by copying files by hand. What the paste workflow costs:
+
+- **Summaries are lossy.** Pasting means summarizing first, and a summary keeps what seemed
+  important at the time. Later you need exactly the detail it dropped. seshport moves the raw
+  transcript: in our round-trip test, a codeword planted in one agent was recalled verbatim by the other.
+- **Pasted text is not history.** A wall of text becomes one giant user message. A ported session
+  lands in the target tool's native resume flow, so turns render properly and session tooling keeps working.
+- **The friction never ends.** Summarize, wait, copy, open, paste, re-explain: five minutes per
+  switch, forever. `/seshport` is five seconds, from inside the conversation.
+
+Honest exception: for a five-message chat, just paste. seshport is for sessions with hours of
+decisions, tool output, and dead ends you do not have time to rebuild.
+
 ## Add your editor (PRs welcome)
 
 Every integration is one `Tool` impl (five methods) plus a demo fixture. See

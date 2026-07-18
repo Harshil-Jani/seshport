@@ -132,6 +132,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   <div class="links">
     <a href="#how">How it works</a>
     <a href="#install">Install</a>
+    <a href="#faq">FAQ</a>
     <a href="#contribute">Contribute</a>
     <a href="https://github.com/Harshil-Jani/seshport">GitHub</a>
     <a class="btn" href="#install">Install seshport</a>
@@ -267,6 +268,37 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   <div class="board">
     <img src="architecture.svg" alt="Whiteboard: Claude Code, Codex CLI and Grok Build all connect to one hub (your whole conversation, carried across) with a dashed slot saying Your editor here, PRs welcome." loading="lazy">
   </div>
+</section>
+
+<section id="faq">
+  <p class="kicker">The obvious question</p>
+  <h2>Can't I just paste the context across?</h2>
+  <p class="lead">You can, the same way you can deploy by copying files by hand.
+  Here is what the paste workflow actually costs.</p>
+  <div class="cases">
+    <div class="case">
+      <h3 class="serif">Summaries are lossy</h3>
+      <p>Pasting means summarizing first, and a summary keeps what seemed important at
+      the time. Three hours later you need exactly the detail it dropped. seshport moves
+      the raw transcript. Our test: a codeword planted in one agent was recalled verbatim
+      by the other.</p>
+    </div>
+    <div class="case">
+      <h3 class="serif">Pasted text is not history</h3>
+      <p>A pasted wall of text becomes one giant user message. A ported session lands in
+      the target tool's native resume flow: turns render properly, session pickers and
+      forks keep working, and the conversation stays structurally correct.</p>
+    </div>
+    <div class="case">
+      <h3 class="serif">The friction never ends</h3>
+      <p>Summarize, wait, copy, open the other tool, paste, re-explain. Five minutes,
+      every switch, forever. One slash command is five seconds. Anything you do ten
+      times a day deserves a command.</p>
+    </div>
+  </div>
+  <p class="lead" style="margin-top:22px">Honest exception: for a five-message chat, just paste.
+  seshport is for the sessions with hours of decisions, tool output, and dead ends you
+  do not have time to rebuild.</p>
 </section>
 
 <section id="contribute">
