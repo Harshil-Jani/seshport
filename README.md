@@ -1,7 +1,7 @@
 # seshport
 
-**Port your session between coding agents.** Convert a Claude Code session into a Codex one
-(or vice versa), then just `resume` and keep going — full conversation context included.
+**Port your session between coding agents.** Type `/seshport` inside Claude Code or Codex,
+open the other agent, and `resume` the exact same conversation — full context included.
 
 By [Harshil-Jani](https://github.com/Harshil-Jani) · MIT
 
@@ -14,12 +14,30 @@ fizzbuzz, recalled by Codex. Real recording, synthetic sessions — nothing stag
 
 ## Install
 
+One line — installs the binary **and** the `/seshport` slash command for both agents:
+
 ```bash
-git clone https://github.com/Harshil-Jani/seshport && cd seshport
-cargo install --path .
+curl -fsSL https://raw.githubusercontent.com/Harshil-Jani/seshport/main/install.sh | sh
 ```
 
-## How to use
+(Or manually: `cargo install --git https://github.com/Harshil-Jani/seshport`, then copy
+[`commands/`](commands/) into `~/.claude/commands/` and `~/.codex/prompts/`.)
+
+## The easy way: `/seshport`
+
+Never leave your agent. Mid-conversation, just type:
+
+```
+/seshport
+```
+
+- Inside **Claude Code** → replies with `codex resume <id>`
+- Inside **Codex** → replies with `cd <project> && claude --resume <id>`
+
+Open the other agent, paste, and continue the exact same conversation. Verified: a codeword
+planted in a Claude Code session was recalled by Codex after a `/seshport` round-trip.
+
+## CLI usage
 
 Direction is auto-detected — a session always converts to the other tool.
 
