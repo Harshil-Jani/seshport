@@ -6,7 +6,7 @@ set -e
 command -v cargo >/dev/null || { echo "cargo not found — install Rust first: https://rustup.rs"; exit 1; }
 
 echo "Installing seshport binary..."
-cargo install --git https://github.com/Harshil-Jani/seshport --quiet
+cargo install seshport --quiet
 
 echo "Installing /seshport slash commands..."
 base="https://raw.githubusercontent.com/Harshil-Jani/seshport/main/commands"

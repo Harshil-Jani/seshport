@@ -1,5 +1,6 @@
 # seshport
 
+[![crates.io](https://img.shields.io/crates/v/seshport?color=4a9eed)](https://crates.io/crates/seshport)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 [![Built with Rust](https://img.shields.io/badge/built%20with-Rust-f59e0b?logo=rust)](https://www.rust-lang.org)
 [![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Grok%20Build-8b5cf6)](#how-to-use)
@@ -25,7 +26,7 @@ One line — installs the binary **and** the `/seshport` slash command for both 
 curl -fsSL https://raw.githubusercontent.com/Harshil-Jani/seshport/main/install.sh | sh
 ```
 
-(Or manually: `cargo install --git https://github.com/Harshil-Jani/seshport`, then copy
+(Or manually: `cargo install seshport`, then copy
 [`commands/`](commands/) into `~/.claude/commands/` and `~/.codex/prompts/`.)
 
 ## The easy way: `/seshport`

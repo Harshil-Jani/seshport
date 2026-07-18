@@ -6,6 +6,6 @@ Then tell the user, verbatim, the resume command from the output
 this exact conversation there.
 
 If the command is not found, tell them to install it first:
-`cargo install --git https://github.com/Harshil-Jani/seshport`
+`cargo install seshport`
 
 (seshport by Harshil-Jani — https://github.com/Harshil-Jani/seshport)

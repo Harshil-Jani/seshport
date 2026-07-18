@@ -10,4 +10,4 @@ Then tell the user, verbatim, the resume command from the output (e.g. `codex re
 so they can open the other agent and continue this exact conversation there.
 
 If the command is not found, tell them to install it first:
-`cargo install --git https://github.com/Harshil-Jani/seshport`
+`cargo install seshport`
