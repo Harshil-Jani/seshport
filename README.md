@@ -105,11 +105,12 @@ seshport demo/grok-session/chat_history.jsonl codex   # -> codex resume <id>
 
 ## Architecture
 
-![seshport architecture — sessions flow through a neutral Transcript; each agent is one Tool impl](docs/architecture.svg)
+![The idea: a session starts in Claude Code, /seshport carries the whole conversation, and it continues in Codex — plus the use cases: no lock-in, beating usage limits, right tool per task](docs/architecture.svg)
 
-Every agent is one implementation of the `Tool` trait against a neutral `Transcript` — so N
-tools cost 2·N converters instead of N². The diagram is editable: open
-[`docs/architecture.excalidraw`](docs/architecture.excalidraw) at [excalidraw.com](https://excalidraw.com).
+The one-whiteboard version (forward it to your team lead). For the technical design —
+every agent is one `Tool` trait impl against a neutral `Transcript`, so N tools cost 2·N
+converters instead of N² — see [CONTRIBUTING.md](CONTRIBUTING.md). The whiteboard is editable:
+open [`docs/architecture.excalidraw`](docs/architecture.excalidraw) at [excalidraw.com](https://excalidraw.com).
 
 ## How it works
 
