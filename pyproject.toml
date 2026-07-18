@@ -1,0 +1,25 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "seshport"
+description = "Port your session between coding agents — Claude Code, Codex, Grok Build — and just resume where you left off."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Harshil-Jani" }]
+keywords = ["claude-code", "codex", "grok", "session", "ai-agents", "cli"]
+classifiers = [
+  "Programming Language :: Rust",
+  "License :: OSI Approved :: MIT License",
+  "Environment :: Console",
+  "Topic :: Software Development :: Build Tools",
+]
+requires-python = ">=3.8"
+dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/Harshil-Jani/seshport"
+
+[tool.maturin]
+bindings = "bin"

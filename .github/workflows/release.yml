@@ -1,0 +1,100 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - { target: aarch64-apple-darwin, os: macos-14 }
+          - { target: x86_64-apple-darwin, os: macos-13 }
+          - { target: x86_64-unknown-linux-musl, os: ubuntu-latest }
+          - { target: aarch64-unknown-linux-musl, os: ubuntu-24.04-arm }
+          - { target: x86_64-pc-windows-msvc, os: windows-latest }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup target add ${{ matrix.target }}
+      - if: contains(matrix.target, 'musl')
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - run: cargo test --release
+      - run: cargo build --release --target ${{ matrix.target }}
+      - name: package binary
+        shell: bash
+        run: |
+          ext=""
+          [[ "${{ matrix.target }}" == *windows* ]] && ext=".exe"
+          gzip -c "target/${{ matrix.target }}/release/seshport$ext" > "seshport-${{ matrix.target }}$ext.gz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bin-${{ matrix.target }}
+          path: seshport-*.gz
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { merge-multiple: true }
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: seshport-*.gz
+          generate_release_notes: true
+
+  crates:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo publish --no-verify
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  npm:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, registry-url: "https://registry.npmjs.org" }
+      - run: npm publish --ignore-scripts --access public
+        working-directory: npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  pypi-wheels:
+    needs: build
+    strategy:
+      matrix:
+        include:
+          - { os: macos-14, args: "" }
+          - { os: ubuntu-latest, args: "--zig" }
+          - { os: windows-latest, args: "" }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: PyO3/maturin-action@v1
+        with:
+          command: build
+          args: --release --strip ${{ matrix.args }}
+          target: ${{ matrix.os == 'ubuntu-latest' && 'x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu' || (matrix.os == 'macos-14' && 'universal2-apple-darwin' || 'x86_64-pc-windows-msvc') }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: target/wheels/*.whl
+
+  pypi:
+    needs: pypi-wheels
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write # PyPI trusted publishing (OIDC) — no token secret needed
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { pattern: "wheels-*", merge-multiple: true, path: dist }
+      - uses: pypa/gh-action-pypi-publish@release/v1

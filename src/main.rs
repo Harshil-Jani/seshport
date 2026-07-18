@@ -173,7 +173,10 @@ fn newest(tool: &dyn Tool) -> Result<PathBuf, String> {
 // ---------- shared helpers ----------
 
 fn home() -> PathBuf {
-    PathBuf::from(std::env::var("HOME").expect("HOME not set"))
+    std::env::var("HOME")
+        .or_else(|_| std::env::var("USERPROFILE")) // windows
+        .map(PathBuf::from)
+        .expect("neither HOME nor USERPROFILE set")
 }
 
 fn now_iso() -> String {

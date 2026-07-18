@@ -1,0 +1,15 @@
+{
+  "name": "seshport",
+  "version": "0.3.0",
+  "description": "Port your session between coding agents — Claude Code, Codex, Grok Build — and just resume where you left off.",
+  "author": "Harshil-Jani",
+  "license": "MIT",
+  "repository": "github:Harshil-Jani/seshport",
+  "homepage": "https://github.com/Harshil-Jani/seshport#readme",
+  "keywords": ["claude-code", "codex", "grok", "session", "ai-agents", "cli"],
+  "bin": { "seshport": "run.js" },
+  "scripts": { "postinstall": "node install.js" },
+  "files": ["run.js", "install.js"],
+  "os": ["darwin", "linux", "win32"],
+  "engines": { "node": ">=16" }
+}
