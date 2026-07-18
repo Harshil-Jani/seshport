@@ -1,6 +1,8 @@
 # seshport
 
 [![crates.io](https://img.shields.io/crates/v/seshport?color=4a9eed)](https://crates.io/crates/seshport)
+[![npm](https://img.shields.io/npm/v/seshport?color=ef4444)](https://www.npmjs.com/package/seshport)
+[![PyPI](https://img.shields.io/pypi/v/seshport?color=22c55e)](https://pypi.org/project/seshport/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 [![Built with Rust](https://img.shields.io/badge/built%20with-Rust-f59e0b?logo=rust)](https://www.rust-lang.org)
 [![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Grok%20Build-8b5cf6)](#how-to-use)
