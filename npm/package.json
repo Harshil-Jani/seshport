@@ -1,7 +1,7 @@
 {
   "name": "seshport",
   "version": "0.3.0",
-  "description": "Port your session between coding agents — Claude Code, Codex, Grok Build — and just resume where you left off.",
+  "description": "Port your session between coding agents (Claude Code, Codex, Grok Build) and just resume where you left off.",
   "author": "Harshil-Jani",
   "license": "MIT",
   "repository": "github:Harshil-Jani/seshport",

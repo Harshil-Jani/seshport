@@ -4,7 +4,7 @@
 
 **Port your session between coding agents.**
 Type `/seshport` inside Claude Code or Codex, open the other agent,
-and `resume` the exact same conversation — full context included.
+and `resume` the exact same conversation with full context included.
 
 [![crates.io](https://img.shields.io/crates/v/seshport?color=4a9eed&label=crates.io)](https://crates.io/crates/seshport)
 [![npm](https://img.shields.io/npm/v/seshport?color=ef4444&label=npm)](https://www.npmjs.com/package/seshport)
@@ -26,14 +26,14 @@ By [Harshil-Jani](https://github.com/Harshil-Jani)
 
 ## Demo
 
-![seshport demo — porting sessions between Claude Code and Codex](docs/demo.gif)
+![seshport demo: porting sessions between Claude Code and Codex](docs/demo.gif)
 
 A Codex session's haiku, recited by Claude Code after the port. A Claude Code session's
-fizzbuzz, recalled by Codex. Real recording, synthetic sessions — nothing staged.
+fizzbuzz, recalled by Codex. Real recording, synthetic sessions, nothing staged.
 
 ## Install
 
-One line — installs the binary **and** the `/seshport` slash command for both agents:
+One line installs the binary **and** the `/seshport` slash command for both agents:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Harshil-Jani/seshport/main/install.sh | sh
@@ -105,27 +105,27 @@ seshport demo/grok-session/chat_history.jsonl codex   # -> codex resume <id>
 
 ## Architecture
 
-![Whiteboard: Claude Code, Codex CLI and Grok Build all connect to one hub — your whole conversation, carried across — with a dashed slot saying Your editor here, PRs welcome](docs/architecture.svg)
+![Whiteboard: Claude Code, Codex CLI and Grok Build all connect to one hub (your whole conversation, carried across) with a dashed slot saying Your editor here, PRs welcome](docs/architecture.svg)
 
-The one-whiteboard version (forward it to your team lead). For the technical design —
-every agent is one `Tool` trait impl against a neutral `Transcript`, so N tools cost 2·N
-converters instead of N² — see [CONTRIBUTING.md](CONTRIBUTING.md). The whiteboard is editable:
+The one-whiteboard version (forward it to your team lead). For the technical design, where
+every agent is one `Tool` trait impl against a neutral `Transcript` (N tools cost 2·N
+converters instead of N²), see [CONTRIBUTING.md](CONTRIBUTING.md). The whiteboard is editable:
 open [`docs/architecture.excalidraw`](docs/architecture.excalidraw) at [excalidraw.com](https://excalidraw.com).
 
 ## How it works
 
 - User and assistant messages transfer as-is into a neutral `Transcript`.
-- Tool calls/results are flattened to readable text (`[tool call: Bash] ...`) — provider-specific
+- Tool calls/results are flattened to readable text (`[tool call: Bash] ...`). Provider-specific
   API state (tool-call ids, encrypted reasoning) can't be replayed cross-provider, but the
   resumed agent gets the full story as context.
 - Thinking/reasoning blocks are dropped (provider-internal).
-- Codex output borrows `base_instructions` from your newest real rollout — ChatGPT-auth Codex
+- Codex output borrows `base_instructions` from your newest real rollout, since ChatGPT-auth Codex
   rejects sessions without the official instructions.
 - Every import starts with an attribution message noting the source session and this tool.
 
-## Add your editor — PRs welcome
+## Add your editor (PRs welcome)
 
-Every integration is one `Tool` impl (five methods) plus a demo fixture — see
+Every integration is one `Tool` impl (five methods) plus a demo fixture. See
 [CONTRIBUTING.md](CONTRIBUTING.md) for the step-by-step guide, and
 [PR #1](https://github.com/Harshil-Jani/seshport/pull/1) (Grok Build) for a worked example
 you can copy.

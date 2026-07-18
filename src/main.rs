@@ -1,11 +1,11 @@
-// seshport — by Harshil-Jani
+// seshport, by Harshil-Jani
 // Hands a coding-agent session off to another agent (Claude Code <-> Codex, more to come)
 // so the target tool can `resume` the conversation and keep going.
 //
 // Architecture: every tool implements the small `Tool` trait (sniff / import / export)
 // against a neutral `Transcript`, so adding an integration never touches the others.
 // Cross-tool resume can't replay provider-specific API state (tool-call ids, encrypted
-// reasoning), so tool calls/results are flattened into readable text — the resumed agent
+// reasoning), so tool calls/results are flattened into readable text; the resumed agent
 // gets the full story as context and continues from there.
 
 use chrono::Utc;
@@ -102,7 +102,7 @@ fn run(src: &str, target_name: Option<&str>) -> Result<(), String> {
             match &others[..] {
                 [(_, t)] => *t,
                 _ => return Err(format!(
-                    "several possible targets — say which: seshport {src} <{}>",
+                    "several possible targets, say which: seshport {src} <{}>",
                     others.iter().map(|(_, t)| t.name()).collect::<Vec<_>>().join("|")
                 )),
             }
@@ -158,11 +158,11 @@ fn locate(tools: &[Box<dyn Tool>], src: &str) -> Result<(usize, PathBuf), String
     match hits.len() {
         0 => Err(format!("no session matching '{src}' in any known tool")),
         1 => Ok(hits.remove(0)),
-        n => Err(format!("ambiguous id '{src}': {n} matches — pass a full path")),
+        n => Err(format!("ambiguous id '{src}': {n} matches, pass a full path")),
     }
 }
 
-// Newest session file by mtime — the filesystem already tracks "most recent" for free.
+// Newest session file by mtime; the filesystem already tracks "most recent" for free.
 fn newest(tool: &dyn Tool) -> Result<PathBuf, String> {
     tool.sessions()
         .into_iter()

@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "seshport"
-description = "Port your session between coding agents — Claude Code, Codex, Grok Build — and just resume where you left off."
+description = "Port your session between coding agents (Claude Code, Codex, Grok Build) and just resume where you left off."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Harshil-Jani" }]

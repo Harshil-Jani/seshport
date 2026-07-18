@@ -1,5 +1,5 @@
 #!/bin/sh
-# seshport installer — prebuilt binary + /seshport slash commands for Claude Code and Codex.
+# seshport installer: prebuilt binary + /seshport slash commands for Claude Code and Codex.
 # Usage:  curl -fsSL https://raw.githubusercontent.com/Harshil-Jani/seshport/main/install.sh | sh
 set -e
 
@@ -20,7 +20,7 @@ if [ -n "$target" ]; then
     | gunzip > "$bindir/seshport"
   chmod +x "$bindir/seshport"
 elif command -v cargo >/dev/null; then
-  echo "No prebuilt binary for this platform — building with cargo..."
+  echo "No prebuilt binary for this platform, building with cargo..."
   cargo install seshport --quiet
   bindir="$HOME/.cargo/bin"
 else

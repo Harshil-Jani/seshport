@@ -9,4 +9,4 @@ sed -i '' "s/\"version\": \".*\"/\"version\": \"$v\"/" npm/package.json
 cargo build --release -q # refresh Cargo.lock
 git add -A && git commit -m "release v$v" && git tag "v$v"
 git push && git push --tags
-echo "v$v tagged — release workflow will publish GH binaries, crates.io, npm, PyPI"
+echo "v$v tagged; release workflow will publish GH binaries, crates.io, npm, PyPI"
