@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>seshport — switch coding agents, keep the conversation</title>
+<meta name="description" content="seshport ports your session between Claude Code, Codex, and Grok Build. Type /seshport, open the other agent, resume with full context.">
+<meta property="og:title" content="seshport — switch coding agents, keep the conversation">
+<meta property="og:description" content="Port your session between Claude Code, Codex, and Grok Build. Resume anywhere, context intact.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⇄</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14121f; --surface:#1e1b2e; --line:#2e2a45;
+  --text:#edeaf6; --muted:#9a93b5;
+  --claude:#e8825a; --codex:#19c37d; --grok:#e5484d; --hub:#a78bfa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:"Geist",system-ui,sans-serif;line-height:1.6;font-size:17px}
+a{color:var(--hub)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2{font-family:"Geist",sans-serif;line-height:1.05;letter-spacing:-.02em}
+code,pre,.mono{font-family:"Geist Mono",monospace}
+
+/* nav */
+nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
+nav .brand{font-family:"Geist",sans-serif;font-weight:800;font-size:22px;color:var(--text);text-decoration:none}
+nav .brand span{color:var(--hub)}
+nav .links a{color:var(--muted);text-decoration:none;margin-left:22px;font-size:15px}
+nav .links a:hover,nav .links a:focus-visible{color:var(--text)}
+
+/* hero */
+.hero{padding:64px 0 40px;text-align:center}
+.hero h1{font-size:clamp(38px,6.5vw,72px);font-weight:800}
+.hero h1 .kc{color:var(--claude)}
+.hero h1 .kx{color:var(--codex)}
+.hero p.sub{margin:20px auto 0;max-width:640px;color:var(--muted);font-size:19px}
+.hero .installbar{display:inline-flex;align-items:center;gap:14px;margin-top:32px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 20px;font-size:16px}
+.hero .installbar code{color:var(--text)}
+.hero .installbar button{background:var(--hub);color:var(--ink);border:0;border-radius:8px;padding:6px 14px;font:600 14px "Geist",sans-serif;cursor:pointer}
+.hero .installbar button:hover{filter:brightness(1.1)}
+.alts{margin-top:14px;color:var(--muted);font-size:14px}
+.alts code{color:var(--muted)}
+
+/* the port — signature */
+.port{display:grid;grid-template-columns:1fr 72px 1fr;gap:0;align-items:stretch;margin:56px 0 0;position:relative}
+.term{background:#171526;border:1px solid var(--line);border-radius:14px;text-align:left;overflow:hidden;min-height:280px}
+.term .bar{display:flex;gap:7px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:13px}
+.term .bar i{width:11px;height:11px;border-radius:50%;background:var(--line);display:inline-block}
+.term .bar .who{margin-left:auto;font-weight:600}
+.term.claude .bar .who{color:var(--claude)}
+.term.codex .bar .who{color:var(--codex)}
+.term .body{padding:16px 18px;font-size:14.5px;line-height:1.75}
+.term .u{color:var(--text)}
+.term .u::before{content:"❯ ";color:var(--hub)}
+.term .a{color:var(--muted)}
+.term .dim{color:#5d5680}
+.seam{position:relative}
+.seam::before{content:"";position:absolute;left:50%;top:8%;bottom:8%;border-left:2px dashed var(--line)}
+.packet{position:absolute;top:46%;left:-40px;background:var(--hub);color:var(--ink);border-radius:999px;padding:5px 12px;font:500 12.5px "Geist Mono",monospace;white-space:nowrap;box-shadow:0 0 24px rgba(167,139,250,.55);animation:travel 7s infinite}
+@keyframes travel{
+  0%,8%{transform:translateX(0);opacity:0}
+  12%{opacity:1}
+  30%{transform:translateX(112px);opacity:1}
+  35%,100%{transform:translateX(112px);opacity:0}
+}
+.term.codex .late{opacity:0;animation:appear 7s infinite}
+@keyframes appear{0%,32%{opacity:0}40%,96%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){
+  .packet{animation:none;transform:translateX(112px);opacity:1}
+  .term.codex .late{animation:none;opacity:1}
+}
+@media (max-width:760px){
+  .port{grid-template-columns:1fr;gap:14px}
+  .seam{display:none}.packet{display:none}
+  .term.codex .late{opacity:1;animation:none}
+}
+
+/* sections */
+section{padding:84px 0 0}
+.eyebrow{color:var(--hub);font:500 14px "Geist Mono",monospace;text-transform:lowercase;letter-spacing:.06em}
+h2{font-size:clamp(28px,4vw,44px);font-weight:700;margin-top:10px}
+.lead{color:var(--muted);max-width:620px;margin-top:14px}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.step .k{font:500 13px "Geist Mono",monospace;color:var(--muted)}
+.step h3{font-size:19px;margin:10px 0 8px;font-weight:600}
+.step p{color:var(--muted);font-size:15px}
+.step code{background:var(--ink);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-size:13.5px;color:var(--text)}
+@media (max-width:760px){.steps{grid-template-columns:1fr}}
+
+/* demo */
+.demoframe{margin-top:36px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#171526}
+.demoframe img{display:block;width:100%;height:auto}
+
+/* install grid */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:36px}
+.cell{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.cell .l{min-width:0}
+.cell .name{font-weight:600;font-size:15px}
+.cell .name a{color:var(--text);text-decoration:none}
+.cell .name a:hover{color:var(--hub)}
+.cell code{display:block;color:var(--muted);font-size:13.5px;margin-top:4px;overflow-x:auto;white-space:nowrap}
+.cell .dot{width:10px;height:10px;border-radius:50%;flex:none}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+
+/* board */
+.board{background:#faf8f4;border-radius:16px;padding:28px;margin-top:36px}
+.board img{width:100%;height:auto;display:block}
+
+/* contribute */
+.yours{margin-top:36px;border:2px dashed var(--line);border-radius:16px;padding:34px;text-align:center}
+.yours .slot{font-family:"Geist",sans-serif;font-size:26px;font-weight:700;color:var(--muted)}
+.yours p{color:var(--muted);margin:10px auto 0;max-width:520px;font-size:15.5px}
+.yours .cta{display:inline-block;margin-top:20px;background:var(--hub);color:var(--ink);text-decoration:none;font-weight:600;border-radius:10px;padding:11px 22px}
+.yours .cta:hover{filter:brightness(1.1)}
+
+footer{margin-top:96px;border-top:1px solid var(--line);padding:30px 0 44px;color:var(--muted);font-size:14.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{color:var(--muted)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--hub);outline-offset:3px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <a class="brand" href="#">sesh<span>port</span></a>
+  <div class="links">
+    <a href="#how">How it works</a>
+    <a href="#install">Install</a>
+    <a href="#contribute">Contribute</a>
+    <a href="https://github.com/Harshil-Jani/seshport">GitHub</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <h1>Switch coding agents.<br>Keep the <span class="kc">conver</span><span class="kx">sation</span>.</h1>
+  <p class="sub">seshport ports your session between Claude Code, Codex, and Grok Build.
+  Open the other agent, hit resume, and it remembers everything you said.</p>
+
+  <div class="installbar">
+    <code id="cmd">curl -fsSL https://raw.githubusercontent.com/Harshil-Jani/seshport/main/install.sh | sh</code>
+    <button onclick="navigator.clipboard.writeText(document.getElementById('cmd').textContent).then(()=>{this.textContent='Copied';setTimeout(()=>this.textContent='Copy',1500)})">Copy</button>
+  </div>
+  <p class="alts">or <code>npm i -g seshport</code> · <code>pip install seshport</code> · <code>cargo install seshport</code> · <code>brew install harshil-jani/tap/seshport</code></p>
+
+  <div class="port" aria-label="A session moving from Claude Code to Codex">
+    <div class="term claude">
+      <div class="bar"><i></i><i></i><i></i><span class="who">Claude Code</span></div>
+      <div class="body">
+        <p class="u">the auth bug is in refreshToken() — fix it</p>
+        <p class="a">Found it: the expiry check compares seconds to<br>milliseconds. Patched and tests pass.</p>
+        <p class="u">/seshport</p>
+        <p class="a">Ported. Resume in Codex with:<br><span class="dim">codex resume 4f2a…</span></p>
+      </div>
+    </div>
+    <div class="seam"><span class="packet">your session ⇄</span></div>
+    <div class="term codex">
+      <div class="bar"><i></i><i></i><i></i><span class="who">Codex</span></div>
+      <div class="body">
+        <p class="u">codex resume 4f2a…</p>
+        <p class="late a">Resuming imported session…</p>
+        <p class="late u">so what was the auth bug again?</p>
+        <p class="late a">The expiry check in refreshToken() mixed seconds<br>with milliseconds — already patched, tests green.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="how">
+  <p class="eyebrow">how it works</p>
+  <h2>One slash command. Zero re-explaining.</h2>
+  <p class="lead">Every coding agent keeps its transcript on disk in its own format.
+  seshport translates between them, so the next agent picks up exactly where the last one stopped.</p>
+  <div class="steps">
+    <div class="step">
+      <p class="k">step 1</p>
+      <h3>Type <code>/seshport</code></h3>
+      <p>Mid-conversation, in whichever agent you're using. It ports the current session on the spot.</p>
+    </div>
+    <div class="step">
+      <p class="k">step 2</p>
+      <h3>Paste the resume command</h3>
+      <p>You get back one line — <code>codex resume &lt;id&gt;</code> or <code>claude --resume &lt;id&gt;</code>. Open the other agent and paste.</p>
+    </div>
+    <div class="step">
+      <p class="k">step 3</p>
+      <h3>Keep going</h3>
+      <p>Full context travels: decisions, tool output, that codeword you planted three hours ago. Verified with real round-trips.</p>
+    </div>
+  </div>
+  <div class="demoframe">
+    <img src="demo.gif" alt="Terminal recording: seshport ports a Codex session, Claude Code resumes it and recites its haiku; then the reverse." loading="lazy">
+  </div>
+</section>
+
+<section id="install">
+  <p class="eyebrow">install</p>
+  <h2>Live on every registry you already use.</h2>
+  <div class="grid">
+    <div class="cell"><div class="l"><p class="name"><a href="https://www.npmjs.com/package/seshport">npm</a></p><code>npm i -g seshport</code></div><span class="dot" style="background:var(--grok)"></span></div>
+    <div class="cell"><div class="l"><p class="name"><a href="https://pypi.org/project/seshport/">PyPI</a></p><code>pip install seshport</code></div><span class="dot" style="background:var(--codex)"></span></div>
+    <div class="cell"><div class="l"><p class="name"><a href="https://crates.io/crates/seshport">crates.io</a></p><code>cargo install seshport</code></div><span class="dot" style="background:var(--claude)"></span></div>
+    <div class="cell"><div class="l"><p class="name"><a href="https://github.com/Harshil-Jani/homebrew-tap">Homebrew</a></p><code>brew install harshil-jani/tap/seshport</code></div><span class="dot" style="background:var(--hub)"></span></div>
+  </div>
+</section>
+
+<section id="architecture">
+  <p class="eyebrow">under the hood</p>
+  <h2>Every agent is five methods away.</h2>
+  <p class="lead">Sessions flow through one neutral transcript. Each tool implements a small
+  <code>Tool</code> trait — sniff, import, export — so integrations never touch each other.</p>
+  <div class="board">
+    <img src="architecture.svg" alt="Architecture: Claude Code, Codex, and Grok Build each connect to a neutral Transcript hub via the Tool trait; a dashed slot says Your editor here." loading="lazy">
+  </div>
+</section>
+
+<section id="contribute">
+  <p class="eyebrow">contribute</p>
+  <h2>Using a different agent?</h2>
+  <div class="yours">
+    <p class="slot">[ your editor here ]</p>
+    <p>Adding one is a single pull request: implement five methods, drop in a demo fixture,
+    run the tests. The Grok Build integration was added exactly this way — copy its PR.</p>
+    <a class="cta" href="https://github.com/Harshil-Jani/seshport/blob/main/CONTRIBUTING.md">Read the 5-step guide</a>
+  </div>
+</section>
+
+<footer>
+  <span>seshport — MIT · by <a href="https://github.com/Harshil-Jani">Harshil-Jani</a></span>
+  <span><a href="https://github.com/Harshil-Jani/seshport">GitHub</a> · <a href="https://github.com/Harshil-Jani/seshport/releases">Releases</a> · <a href="https://github.com/Harshil-Jani/seshport/pull/1">The exemplar PR</a></span>
+</footer>
+
+</div>
+</body>
+</html>
