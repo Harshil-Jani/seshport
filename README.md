@@ -1,5 +1,10 @@
 # seshport
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
+[![Built with Rust](https://img.shields.io/badge/built%20with-Rust-f59e0b?logo=rust)](https://www.rust-lang.org)
+[![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%E2%87%84%20Codex-8b5cf6)](#the-easy-way-seshport)
+[![GitHub stars](https://img.shields.io/github/stars/Harshil-Jani/seshport?style=social)](https://github.com/Harshil-Jani/seshport/stargazers)
+
 **Port your session between coding agents.** Type `/seshport` inside Claude Code or Codex,
 open the other agent, and `resume` the exact same conversation — full context included.
 
@@ -65,6 +70,14 @@ seshport demo/codex-session.jsonl    # -> claude --resume <id>
 seshport demo/claude-session.jsonl   # -> codex resume <id>
 ```
 
+## Architecture
+
+![seshport architecture — sessions flow through a neutral Transcript; each agent is one Tool impl](docs/architecture.svg)
+
+Every agent is one implementation of the `Tool` trait against a neutral `Transcript` — so N
+tools cost 2·N converters instead of N². The diagram is editable: open
+[`docs/architecture.excalidraw`](docs/architecture.excalidraw) at [excalidraw.com](https://excalidraw.com).
+
 ## How it works
 
 - User and assistant messages transfer as-is into a neutral `Transcript`.
@@ -79,8 +92,7 @@ seshport demo/claude-session.jsonl   # -> codex resume <id>
 ## Adding a tool
 
 Implement the `Tool` trait in `src/main.rs` (five methods: `name`, `root`, `sniff`, `import`,
-`export`) and add it to `tools()`. Nothing else changes — the neutral `Transcript` keeps
-integrations independent, so N tools cost 2·N converters instead of N².
+`export`) and add it to `tools()`. Nothing else changes — integrations stay independent.
 
 ## License
 
