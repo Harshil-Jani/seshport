@@ -10,224 +10,244 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⇄</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#14121f; --surface:#1e1b2e; --line:#2e2a45;
-  --text:#edeaf6; --muted:#9a93b5;
-  --claude:#e8825a; --codex:#19c37d; --grok:#e5484d; --hub:#a78bfa;
+  --bg:#f5f3ee; --panel:#fbfaf7; --ink:#141414; --muted:#6b6862;
+  --line:#e2dfd6; --pixel:#cfe4f5; --pixel2:#bcd9f0; --green:#cfe8c9;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--ink);color:var(--text);font-family:"VT323",monospace;line-height:1.6;font-size:21px}
-a{color:var(--hub)}
-.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
-h1,h2{font-family:"VT323",monospace;line-height:1.05;letter-spacing:0}
-code,pre,.mono{font-family:"VT323",monospace}
+body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;font-size:14px;line-height:1.65}
+a{color:var(--ink)}
+img{max-width:100%;display:block}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+h1,h2,h3.serif,.stat b{font-family:"Source Serif 4",Georgia,serif;font-weight:600;letter-spacing:-.01em}
+.mono{font-family:"IBM Plex Mono",monospace}
+
+/* announcement */
+.bar{background:#000;color:#fff;text-align:center;font-size:12px;padding:9px 14px}
+.bar a{color:#fff;text-decoration:none}
+.bar a:hover{text-decoration:underline}
 
 /* nav */
-nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
-nav .brand{font-family:"VT323",monospace;font-weight:400;font-size:26px;color:var(--text);text-decoration:none}
-nav .brand span{color:var(--hub)}
-nav .links a{color:var(--muted);text-decoration:none;margin-left:22px;font-size:19px}
-nav .links a:hover,nav .links a:focus-visible{color:var(--text)}
+nav{display:flex;align-items:center;gap:28px;padding:16px 0;border-bottom:1px solid var(--line)}
+nav .logo{display:flex;align-items:center;gap:9px;font-weight:600;font-size:15px;text-decoration:none}
+nav .logo .mark{width:26px;height:26px;background:#000;color:#fff;display:grid;place-items:center;border-radius:6px;font-size:14px}
+nav .links{margin-left:auto;display:flex;gap:22px;align-items:center}
+nav .links a{color:var(--ink);text-decoration:none;font-size:13.5px}
+nav .links a:hover{opacity:.65}
+nav .links a.btn{color:#fff}
+.btn{background:#000;color:#fff;text-decoration:none;font-size:13px;font-weight:500;padding:10px 16px;border-radius:4px;display:inline-block;border:0;cursor:pointer}
+.btn:hover{opacity:.85}
+.btn .arr{margin-left:8px}
 
 /* hero */
-.hero{padding:64px 0 40px;text-align:center}
-.hero h1{font-size:clamp(48px,8vw,92px);font-weight:400}
-.hero h1 .kc{color:var(--claude)}
-.hero h1 .kx{color:var(--codex)}
-.hero p.sub{margin:20px auto 0;max-width:640px;color:var(--muted);font-size:23px}
-.hero .installbar{display:inline-flex;align-items:center;gap:14px;margin-top:32px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 20px;font-size:20px}
-.hero .installbar code{color:var(--text)}
-.hero .installbar button{background:var(--hub);color:var(--ink);border:0;border-radius:8px;padding:6px 14px;font:400 17px "VT323",monospace;cursor:pointer}
-.hero .installbar button:hover{filter:brightness(1.1)}
-.alts{margin-top:14px;color:var(--muted);font-size:18px}
-.alts code{color:var(--muted)}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding:72px 0 64px}
+.hero h1{font-size:clamp(34px,4.6vw,52px);line-height:1.12}
+.hero p.sub{margin:18px 0 26px;color:var(--muted);font-size:14.5px;max-width:460px}
+.hero .install{margin-top:14px;font-size:12.5px;color:var(--muted)}
+.hero .install code{color:var(--ink)}
+.media{background:#141414;border-radius:10px;padding:10px;box-shadow:0 24px 60px -30px rgba(20,20,20,.35)}
+.media .cap{color:#fff;font-size:12.5px;padding:4px 6px 10px;display:flex;align-items:center;gap:8px}
+.media .cap .mark{width:18px;height:18px;background:#fff;color:#000;display:grid;place-items:center;border-radius:4px;font-size:11px}
+.media img{border-radius:6px}
 
-/* the port — signature */
-.port{display:grid;grid-template-columns:1fr 72px 1fr;gap:0;align-items:stretch;margin:56px 0 0;position:relative}
-.term{background:#171526;border:1px solid var(--line);border-radius:14px;text-align:left;overflow:hidden;min-height:280px}
-.term .bar{display:flex;gap:7px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:16px}
-.term .bar i{width:11px;height:11px;border-radius:50%;background:var(--line);display:inline-block}
-.term .bar .who{margin-left:auto;font-weight:400}
-.term.claude .bar .who{color:var(--claude)}
-.term.codex .bar .who{color:var(--codex)}
-.term .body{padding:16px 18px;font-size:18px;line-height:1.75}
-.term .u{color:var(--text)}
-.term .u::before{content:"❯ ";color:var(--hub)}
-.term .a{color:var(--muted)}
-.term .dim{color:#5d5680}
-.seam{position:relative}
-.seam::before{content:"";position:absolute;left:50%;top:8%;bottom:8%;border-left:2px dashed var(--line)}
-.packet{position:absolute;top:46%;left:-40px;background:var(--hub);color:var(--ink);border-radius:999px;padding:5px 12px;font:400 15px "VT323",monospace;white-space:nowrap;box-shadow:0 0 24px rgba(167,139,250,.55);animation:travel 7s infinite}
-@keyframes travel{
-  0%,8%{transform:translateX(0);opacity:0}
-  12%{opacity:1}
-  30%{transform:translateX(112px);opacity:1}
-  35%,100%{transform:translateX(112px);opacity:0}
-}
-.term.codex .late{opacity:0;animation:appear 7s infinite}
-@keyframes appear{0%,32%{opacity:0}40%,96%{opacity:1}100%{opacity:0}}
-@media (prefers-reduced-motion: reduce){
-  .packet{animation:none;transform:translateX(112px);opacity:1}
-  .term.codex .late{animation:none;opacity:1}
-}
-@media (max-width:760px){
-  .port{grid-template-columns:1fr;gap:14px}
-  .seam{display:none}.packet{display:none}
-  .term.codex .late{opacity:1;animation:none}
-}
+/* stats band */
+.band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:44px 0;text-align:center}
+.band .kicker{margin-bottom:30px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr)}
+.stat{padding:6px 12px}
+.stat + .stat{border-left:1px solid var(--line)}
+.stat b{font-size:44px;font-weight:600;display:block;line-height:1.1}
+.stat span{font-size:12px;color:var(--muted)}
 
 /* sections */
-section{padding:84px 0 0}
-.eyebrow{color:var(--hub);font:400 17px "VT323",monospace;text-transform:lowercase;letter-spacing:.06em}
-h2{font-size:clamp(34px,5vw,54px);font-weight:400;margin-top:10px}
-.lead{color:var(--muted);max-width:620px;margin-top:14px}
+section{padding:76px 0 0}
+.kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h2{font-size:clamp(26px,3.2vw,34px);margin-top:10px}
+.lead{color:var(--muted);max-width:560px;margin-top:10px;font-size:14px}
 
-/* steps */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
-.step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
-.step .k{font:400 16px "VT323",monospace;color:var(--muted)}
-.step h3{font-size:24px;margin:10px 0 8px;font-weight:400}
-.step p{color:var(--muted);font-size:19px}
-.step code{background:var(--ink);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-size:16.5px;color:var(--text)}
-@media (max-width:760px){.steps{grid-template-columns:1fr}}
+/* how-it-works rows */
+.row{display:grid;grid-template-columns:1fr 1.15fr;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-top:22px;overflow:hidden}
+.row .txt{padding:38px 36px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.chip{background:#000;color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:4px 9px;border-radius:3px;display:inline-flex;gap:7px;align-items:center}
+.row .txt h3{font-family:"Source Serif 4",Georgia,serif;font-weight:600;font-size:26px;margin:16px 0 10px}
+.row .txt p{color:var(--muted);font-size:13.5px;max-width:400px}
+.row .txt code{font-family:"IBM Plex Mono",monospace;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12px}
+.mosaic{position:relative;min-height:280px;background:
+  linear-gradient(var(--panel) 1.5px, transparent 1.5px),
+  linear-gradient(90deg, var(--panel) 1.5px, transparent 1.5px),
+  radial-gradient(circle at 30% 40%, var(--pixel2) 0 22%, transparent 42%),
+  radial-gradient(circle at 72% 62%, var(--green) 0 12%, transparent 30%),
+  var(--pixel);
+  background-size:14px 14px,14px 14px,auto,auto,auto}
+.tag{position:absolute;background:#000;color:#fff;font-family:"IBM Plex Mono",monospace;font-size:10.5px;padding:4px 8px;border-radius:2px;white-space:nowrap}
+.tag.lite{background:#fff;color:#000;border:1px solid #000}
 
-/* demo */
-.demoframe{margin-top:36px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#171526}
-.demoframe img{display:block;width:100%;height:auto}
+/* chips grid */
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:9px 14px;font-size:13px;text-decoration:none;color:var(--ink)}
+a.pill:hover{border-color:#000}
+.pill .dot{width:8px;height:8px;border-radius:2px;background:#000;flex:none}
+.pill code{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted)}
 
-/* install grid */
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:36px}
-.cell{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.cell .l{min-width:0}
-.cell .name{font-weight:400;font-size:19px}
-.cell .name a{color:var(--text);text-decoration:none}
-.cell .name a:hover{color:var(--hub)}
-.cell code{display:block;color:var(--muted);font-size:16.5px;margin-top:4px;overflow-x:auto;white-space:nowrap}
-.cell .dot{width:10px;height:10px;border-radius:50%;flex:none}
-@media (max-width:760px){.grid{grid-template-columns:1fr}}
-
-/* board */
-.board{background:#faf8f4;border-radius:16px;padding:28px;margin-top:36px}
-.board img{width:100%;height:auto;display:block}
+/* architecture */
+.board{background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px;margin-top:26px}
 
 /* contribute */
-.yours{margin-top:36px;border:2px dashed var(--line);border-radius:16px;padding:34px;text-align:center}
-.yours .slot{font-family:"VT323",monospace;font-size:32px;font-weight:400;color:var(--muted)}
-.yours p{color:var(--muted);margin:10px auto 0;max-width:520px;font-size:19px}
-.yours .cta{display:inline-block;margin-top:20px;background:var(--hub);color:var(--ink);text-decoration:none;font-weight:400;border-radius:10px;padding:11px 22px}
-.yours .cta:hover{filter:brightness(1.1)}
+.yours{margin-top:26px;border:1.5px dashed #b9b5a9;border-radius:8px;padding:40px;text-align:center;background:var(--panel)}
+.yours .slot{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--muted)}
+.yours h3{font-family:"Source Serif 4",Georgia,serif;font-size:24px;font-weight:600;margin:8px 0 10px}
+.yours p{color:var(--muted);font-size:13.5px;max-width:480px;margin:0 auto 22px}
 
-footer{margin-top:96px;border-top:1px solid var(--line);padding:30px 0 44px;color:var(--muted);font-size:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer{margin-top:88px;border-top:1px solid var(--line);padding:26px 0 40px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12.5px}
 footer a{color:var(--muted)}
-button:focus-visible,a:focus-visible{outline:2px solid var(--hub);outline-offset:3px;border-radius:4px}
+button:focus-visible,a:focus-visible{outline:2px solid #000;outline-offset:3px}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;gap:34px;padding:48px 0 40px}
+  .row{grid-template-columns:1fr}
+  .mosaic{min-height:220px}
+  .stats{grid-template-columns:1fr;gap:22px}
+  .stat + .stat{border-left:0;border-top:1px solid var(--line);padding-top:22px}
+  nav .links a:not(.btn){display:none}
+}
 </style>
 </head>
 <body>
+
+<div class="bar"><a href="#install">Now live on npm, PyPI, crates.io &amp; Homebrew &nbsp;→</a></div>
+
 <div class="wrap">
 
 <nav>
-  <a class="brand" href="#">sesh<span>port</span></a>
+  <a class="logo" href="#"><span class="mark">⇄</span> seshport</a>
   <div class="links">
     <a href="#how">How it works</a>
     <a href="#install">Install</a>
     <a href="#contribute">Contribute</a>
     <a href="https://github.com/Harshil-Jani/seshport">GitHub</a>
+    <a class="btn" href="#install">Install seshport</a>
   </div>
 </nav>
 
 <header class="hero">
-  <h1>Switch coding agents.<br>Keep the <span class="kc">conver</span><span class="kx">sation</span>.</h1>
-  <p class="sub">seshport ports your session between Claude Code, Codex, and Grok Build.
-  Open the other agent, hit resume, and it remembers everything you said.</p>
-
-  <div class="installbar">
-    <code id="cmd">curl -fsSL https://raw.githubusercontent.com/Harshil-Jani/seshport/main/install.sh | sh</code>
-    <button onclick="navigator.clipboard.writeText(document.getElementById('cmd').textContent).then(()=>{this.textContent='Copied';setTimeout(()=>this.textContent='Copy',1500)})">Copy</button>
+  <div>
+    <h1>Switch coding agents.<br>Keep the conversation.<br>Resume anywhere.</h1>
+    <p class="sub">seshport ports your session between Claude Code, Codex, and Grok Build.
+    Type <span class="mono">/seshport</span> mid-conversation, open the other agent, and it
+    remembers everything — decisions, tool output, all of it.</p>
+    <a class="btn" href="#install">Install in one line <span class="arr">→</span></a>
+    <p class="install mono">npm i -g seshport · pip install seshport · cargo install seshport · brew install harshil-jani/tap/seshport</p>
   </div>
-  <p class="alts">or <code>npm i -g seshport</code> · <code>pip install seshport</code> · <code>cargo install seshport</code> · <code>brew install harshil-jani/tap/seshport</code></p>
-
-  <div class="port" aria-label="A session moving from Claude Code to Codex">
-    <div class="term claude">
-      <div class="bar"><i></i><i></i><i></i><span class="who">Claude Code</span></div>
-      <div class="body">
-        <p class="u">the auth bug is in refreshToken() — fix it</p>
-        <p class="a">Found it: the expiry check compares seconds to<br>milliseconds. Patched and tests pass.</p>
-        <p class="u">/seshport</p>
-        <p class="a">Ported. Resume in Codex with:<br><span class="dim">codex resume 4f2a…</span></p>
-      </div>
-    </div>
-    <div class="seam"><span class="packet">your session ⇄</span></div>
-    <div class="term codex">
-      <div class="bar"><i></i><i></i><i></i><span class="who">Codex</span></div>
-      <div class="body">
-        <p class="u">codex resume 4f2a…</p>
-        <p class="late a">Resuming imported session…</p>
-        <p class="late u">so what was the auth bug again?</p>
-        <p class="late a">The expiry check in refreshToken() mixed seconds<br>with milliseconds — already patched, tests green.</p>
-      </div>
-    </div>
+  <div class="media">
+    <p class="cap"><span class="mark">⇄</span> This is seshport — a real port, both directions</p>
+    <img src="demo.gif" alt="Terminal recording: seshport ports a Codex session, Claude Code resumes it and recites its haiku; then the reverse.">
   </div>
 </header>
 
+<div class="band">
+  <p class="kicker">Built, verified and shipped in the open</p>
+  <div class="stats">
+    <div class="stat"><b>3</b><span>coding agents supported</span></div>
+    <div class="stat"><b>5</b><span>install channels, all registries</span></div>
+    <div class="stat"><b>1</b><span>slash command to move between them</span></div>
+  </div>
+</div>
+
 <section id="how">
-  <p class="eyebrow">how it works</p>
-  <h2>One slash command. Zero re-explaining.</h2>
-  <p class="lead">Every coding agent keeps its transcript on disk in its own format.
-  seshport translates between them, so the next agent picks up exactly where the last one stopped.</p>
-  <div class="steps">
-    <div class="step">
-      <p class="k">step 1</p>
-      <h3>Type <code>/seshport</code></h3>
-      <p>Mid-conversation, in whichever agent you're using. It ports the current session on the spot.</p>
+  <p class="kicker">How it works</p>
+  <h2>From amnesia to continuity</h2>
+
+  <div class="row">
+    <div class="txt">
+      <span class="chip">⌕ 1/3</span>
+      <h3>Type /seshport, anywhere</h3>
+      <p>Mid-conversation, in whichever agent you're using. seshport finds the live session
+      on disk — every agent keeps its transcript in its own format — and detects the direction
+      automatically.</p>
     </div>
-    <div class="step">
-      <p class="k">step 2</p>
-      <h3>Paste the resume command</h3>
-      <p>You get back one line — <code>codex resume &lt;id&gt;</code> or <code>claude --resume &lt;id&gt;</code>. Open the other agent and paste.</p>
-    </div>
-    <div class="step">
-      <p class="k">step 3</p>
-      <h3>Keep going</h3>
-      <p>Full context travels: decisions, tool output, that codeword you planted three hours ago. Verified with real round-trips.</p>
+    <div class="mosaic" role="img" aria-label="Pixel field with labels: your session, claude code, codex, grok build">
+      <span class="tag" style="top:18%;left:12%">CLAUDE CODE</span>
+      <span class="tag lite" style="top:44%;left:38%">YOUR SESSION</span>
+      <span class="tag" style="top:26%;right:10%">CODEX</span>
+      <span class="tag" style="bottom:20%;right:22%">GROK BUILD</span>
+      <span class="tag" style="bottom:14%;left:16%">/seshport</span>
     </div>
   </div>
-  <div class="demoframe">
-    <img src="demo.gif" alt="Terminal recording: seshport ports a Codex session, Claude Code resumes it and recites its haiku; then the reverse." loading="lazy">
+
+  <div class="row">
+    <div class="txt">
+      <span class="chip">⇄ 2/3</span>
+      <h3>The transcript gets translated</h3>
+      <p>Messages flow through one neutral transcript. Tool calls flatten to readable text,
+      provider-internal state is dropped, and the result lands where the other agent's
+      <code>resume</code> already looks.</p>
+    </div>
+    <div class="mosaic" role="img" aria-label="Pixel field with labels: import, neutral transcript, export">
+      <span class="tag" style="top:22%;left:12%">IMPORT</span>
+      <span class="tag lite" style="top:46%;left:34%">NEUTRAL TRANSCRIPT</span>
+      <span class="tag" style="top:24%;right:14%">EXPORT</span>
+      <span class="tag" style="bottom:18%;left:24%">[tool call: Bash]</span>
+      <span class="tag" style="bottom:24%;right:10%">chat_history.jsonl</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="txt">
+      <span class="chip">▶ 3/3</span>
+      <h3>Paste one line. Keep going.</h3>
+      <p>You get back <code>codex resume &lt;id&gt;</code> or <code>claude --resume &lt;id&gt;</code>.
+      The next agent picks up exactly where the last one stopped — verified with real round-trips:
+      a codeword planted in one agent was recalled by the other.</p>
+    </div>
+    <div class="mosaic" role="img" aria-label="Pixel field with labels: resume command and recalled codeword">
+      <span class="tag" style="top:20%;left:14%">codex resume 4f2a…</span>
+      <span class="tag lite" style="top:48%;left:40%">CONTEXT INTACT</span>
+      <span class="tag" style="bottom:22%;left:18%">GUAVA-99 ✓</span>
+      <span class="tag" style="top:30%;right:10%">claude --resume</span>
+    </div>
   </div>
 </section>
 
 <section id="install">
-  <p class="eyebrow">install</p>
-  <h2>Live on every registry you already use.</h2>
-  <div class="grid">
-    <div class="cell"><div class="l"><p class="name"><a href="https://www.npmjs.com/package/seshport">npm</a></p><code>npm i -g seshport</code></div><span class="dot" style="background:var(--grok)"></span></div>
-    <div class="cell"><div class="l"><p class="name"><a href="https://pypi.org/project/seshport/">PyPI</a></p><code>pip install seshport</code></div><span class="dot" style="background:var(--codex)"></span></div>
-    <div class="cell"><div class="l"><p class="name"><a href="https://crates.io/crates/seshport">crates.io</a></p><code>cargo install seshport</code></div><span class="dot" style="background:var(--claude)"></span></div>
-    <div class="cell"><div class="l"><p class="name"><a href="https://github.com/Harshil-Jani/homebrew-tap">Homebrew</a></p><code>brew install harshil-jani/tap/seshport</code></div><span class="dot" style="background:var(--hub)"></span></div>
+  <p class="kicker">Install</p>
+  <h2>Plug in from any registry</h2>
+  <p class="lead">One binary, five channels. The curl one-liner also installs the
+  <span class="mono">/seshport</span> slash command for Claude Code and Codex.</p>
+  <div class="chips">
+    <a class="pill" href="https://www.npmjs.com/package/seshport"><span class="dot"></span> npm <code>npm i -g seshport</code></a>
+    <a class="pill" href="https://pypi.org/project/seshport/"><span class="dot"></span> PyPI <code>pip install seshport</code></a>
+    <a class="pill" href="https://crates.io/crates/seshport"><span class="dot"></span> crates.io <code>cargo install seshport</code></a>
+    <a class="pill" href="https://github.com/Harshil-Jani/homebrew-tap"><span class="dot"></span> Homebrew <code>brew install harshil-jani/tap/seshport</code></a>
+    <a class="pill" href="https://github.com/Harshil-Jani/seshport/releases"><span class="dot"></span> Binaries <code>mac · linux · windows</code></a>
+  </div>
+  <div class="chips" style="margin-top:14px">
+    <span class="pill mono" style="cursor:text" id="curl">curl -fsSL https://raw.githubusercontent.com/Harshil-Jani/seshport/main/install.sh | sh</span>
+    <button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('curl').textContent).then(()=>{this.textContent='Copied';setTimeout(()=>this.textContent='Copy',1500)})">Copy</button>
   </div>
 </section>
 
 <section id="architecture">
-  <p class="eyebrow">under the hood</p>
-  <h2>Every agent is five methods away.</h2>
+  <p class="kicker">Under the hood</p>
+  <h2>Every agent is five methods away</h2>
   <p class="lead">Sessions flow through one neutral transcript. Each tool implements a small
-  <code>Tool</code> trait — sniff, import, export — so integrations never touch each other.</p>
+  <span class="mono">Tool</span> trait — sniff, import, export — so integrations never touch each other.</p>
   <div class="board">
     <img src="architecture.svg" alt="Architecture: Claude Code, Codex, and Grok Build each connect to a neutral Transcript hub via the Tool trait; a dashed slot says Your editor here." loading="lazy">
   </div>
 </section>
 
 <section id="contribute">
-  <p class="eyebrow">contribute</p>
+  <p class="kicker">Contribute</p>
   <h2>Using a different agent?</h2>
   <div class="yours">
-    <p class="slot">[ your editor here ]</p>
-    <p>Adding one is a single pull request: implement five methods, drop in a demo fixture,
-    run the tests. The Grok Build integration was added exactly this way — copy its PR.</p>
-    <a class="cta" href="https://github.com/Harshil-Jani/seshport/blob/main/CONTRIBUTING.md">Read the 5-step guide</a>
+    <p class="slot">[ YOUR EDITOR HERE ]</p>
+    <h3>Adding one is a single pull request</h3>
+    <p>Implement five methods, drop in a demo fixture, run the tests. The Grok Build
+    integration was added exactly this way — copy its PR.</p>
+    <a class="btn" href="https://github.com/Harshil-Jani/seshport/blob/main/CONTRIBUTING.md">Read the 5-step guide <span class="arr">→</span></a>
   </div>
 </section>
 
