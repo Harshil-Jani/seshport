@@ -26,8 +26,18 @@ One line — installs the binary **and** the `/seshport` slash command for both 
 curl -fsSL https://raw.githubusercontent.com/Harshil-Jani/seshport/main/install.sh | sh
 ```
 
-(Or manually: `cargo install seshport`, then copy
-[`commands/`](commands/) into `~/.claude/commands/` and `~/.codex/prompts/`.)
+Or grab just the binary from wherever you live:
+
+```bash
+npm i -g seshport                        # Node
+pip install seshport                     # Python
+cargo install seshport                   # Rust
+brew install harshil-jani/tap/seshport   # Homebrew
+```
+
+Then copy [`commands/`](commands/) into `~/.claude/commands/` and `~/.codex/prompts/`
+for the `/seshport` slash command. Prebuilt binaries for mac (arm/x64), linux (arm/x64),
+and windows are on [Releases](https://github.com/Harshil-Jani/seshport/releases).
 
 ## The easy way: `/seshport`
 
