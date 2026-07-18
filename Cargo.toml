@@ -1,0 +1,11 @@
+[package]
+name = "seshport"
+version = "0.2.0"
+edition = "2021"
+authors = ["Harshil-Jani"]
+description = "Port your session between coding agents — Claude Code, Codex, and friends — and just resume where you left off."
+
+[dependencies]
+serde_json = "1"
+uuid = { version = "1", features = ["v4"] }
+chrono = "0.4"
