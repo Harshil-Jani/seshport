@@ -1,17 +1,28 @@
+<div align="center">
+
 # seshport
 
-[![crates.io](https://img.shields.io/crates/v/seshport?color=4a9eed)](https://crates.io/crates/seshport)
-[![npm](https://img.shields.io/npm/v/seshport?color=ef4444)](https://www.npmjs.com/package/seshport)
-[![PyPI](https://img.shields.io/pypi/v/seshport?color=22c55e)](https://pypi.org/project/seshport/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
-[![Built with Rust](https://img.shields.io/badge/built%20with-Rust-f59e0b?logo=rust)](https://www.rust-lang.org)
-[![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Grok%20Build-8b5cf6)](#how-to-use)
+**Port your session between coding agents.**
+Type `/seshport` inside Claude Code or Codex, open the other agent,
+and `resume` the exact same conversation — full context included.
+
+[![crates.io](https://img.shields.io/crates/v/seshport?color=4a9eed&label=crates.io)](https://crates.io/crates/seshport)
+[![npm](https://img.shields.io/npm/v/seshport?color=ef4444&label=npm)](https://www.npmjs.com/package/seshport)
+[![PyPI](https://img.shields.io/pypi/v/seshport?color=22c55e&label=PyPI)](https://pypi.org/project/seshport/)
+[![Homebrew](https://img.shields.io/badge/homebrew-harshil--jani%2Ftap-f59e0b)](https://github.com/Harshil-Jani/homebrew-tap)
+[![CI](https://github.com/Harshil-Jani/seshport/actions/workflows/ci.yml/badge.svg)](https://github.com/Harshil-Jani/seshport/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-8b5cf6)](LICENSE)
+
+[![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Grok%20Build-1e1e2e)](#cli-usage)
 [![GitHub stars](https://img.shields.io/github/stars/Harshil-Jani/seshport?style=social)](https://github.com/Harshil-Jani/seshport/stargazers)
 
-**Port your session between coding agents.** Type `/seshport` inside Claude Code or Codex,
-open the other agent, and `resume` the exact same conversation — full context included.
+`npm i -g seshport` · `pip install seshport` · `cargo install seshport` · `brew install harshil-jani/tap/seshport`
 
-By [Harshil-Jani](https://github.com/Harshil-Jani) · MIT
+By [Harshil-Jani](https://github.com/Harshil-Jani)
+
+</div>
+
+---
 
 ## Demo
 
@@ -38,8 +49,15 @@ brew install harshil-jani/tap/seshport   # Homebrew
 ```
 
 Then copy [`commands/`](commands/) into `~/.claude/commands/` and `~/.codex/prompts/`
-for the `/seshport` slash command. Prebuilt binaries for mac (arm/x64), linux (arm/x64),
-and windows are on [Releases](https://github.com/Harshil-Jani/seshport/releases).
+for the `/seshport` slash command.
+
+| Registry | Link |
+|----------|------|
+| npm | https://www.npmjs.com/package/seshport |
+| PyPI | https://pypi.org/project/seshport/ |
+| crates.io | https://crates.io/crates/seshport |
+| Homebrew tap | https://github.com/Harshil-Jani/homebrew-tap |
+| Prebuilt binaries (mac arm/x64, linux arm/x64, windows) | https://github.com/Harshil-Jani/seshport/releases |
 
 ## The easy way: `/seshport`
 
