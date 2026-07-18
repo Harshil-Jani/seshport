@@ -105,7 +105,7 @@ seshport demo/grok-session/chat_history.jsonl codex   # -> codex resume <id>
 
 ## Architecture
 
-![The idea: a session starts in Claude Code, /seshport carries the whole conversation, and it continues in Codex — plus the use cases: no lock-in, beating usage limits, right tool per task](docs/architecture.svg)
+![Whiteboard: Claude Code, Codex CLI and Grok Build all connect to one hub — your whole conversation, carried across — with a dashed slot saying Your editor here, PRs welcome](docs/architecture.svg)
 
 The one-whiteboard version (forward it to your team lead). For the technical design —
 every agent is one `Tool` trait impl against a neutral `Transcript`, so N tools cost 2·N
