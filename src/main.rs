@@ -46,10 +46,17 @@ trait Tool {
     fn import(&self, path: &Path) -> Result<Transcript, String>;
     /// Returns (output path, resume command).
     fn export(&self, t: &Transcript) -> Result<(PathBuf, String), String>;
+    /// Every transcript file of this tool. Default: all .jsonl under root().
+    /// Override when only specific files are transcripts (see GrokBuild).
+    fn sessions(&self) -> Vec<PathBuf> {
+        let mut v = Vec::new();
+        find_jsonl(&self.root(), "", &mut v);
+        v
+    }
 }
 
 fn tools() -> Vec<Box<dyn Tool>> {
-    vec![Box::new(ClaudeCode), Box::new(Codex)]
+    vec![Box::new(ClaudeCode), Box::new(Codex), Box::new(GrokBuild)]
 }
 
 // ---------- cli ----------
@@ -125,7 +132,7 @@ fn run(src: &str, target_name: Option<&str>) -> Result<(), String> {
 // Figure out which transcript the user means and which tool it belongs to.
 fn locate(tools: &[Box<dyn Tool>], src: &str) -> Result<(usize, PathBuf), String> {
     if let Some(i) = tools.iter().position(|t| t.name() == src) {
-        return newest(&tools[i].root()).map(|p| (i, p));
+        return newest(tools[i].as_ref()).map(|p| (i, p));
     }
     let p = PathBuf::from(src);
     if p.is_file() {
@@ -137,11 +144,16 @@ fn locate(tools: &[Box<dyn Tool>], src: &str) -> Result<(usize, PathBuf), String
             .map(|i| (i, p.clone()))
             .ok_or_else(|| format!("{}: not a transcript of any known tool", p.display()));
     }
+    // Session ids may live in the file name (claude, codex) or a directory name (grok),
+    // so match against the full path.
     let mut hits: Vec<(usize, PathBuf)> = Vec::new();
     for (i, t) in tools.iter().enumerate() {
-        let mut found = Vec::new();
-        find_jsonl(&t.root(), src, &mut found);
-        hits.extend(found.into_iter().map(|p| (i, p)));
+        hits.extend(
+            t.sessions()
+                .into_iter()
+                .filter(|p| p.to_string_lossy().contains(src))
+                .map(|p| (i, p)),
+        );
     }
     match hits.len() {
         0 => Err(format!("no session matching '{src}' in any known tool")),
@@ -151,13 +163,11 @@ fn locate(tools: &[Box<dyn Tool>], src: &str) -> Result<(usize, PathBuf), String
 }
 
 // Newest session file by mtime — the filesystem already tracks "most recent" for free.
-fn newest(root: &Path) -> Result<PathBuf, String> {
-    let mut files = Vec::new();
-    find_jsonl(root, "", &mut files);
-    files
+fn newest(tool: &dyn Tool) -> Result<PathBuf, String> {
+    tool.sessions()
         .into_iter()
         .max_by_key(|p| fs::metadata(p).and_then(|m| m.modified()).ok())
-        .ok_or_else(|| format!("no sessions under {}", root.display()))
+        .ok_or_else(|| format!("no sessions under {}", tool.root().display()))
 }
 
 // ---------- shared helpers ----------
@@ -192,6 +202,53 @@ fn read_lines(path: &Path) -> Result<Vec<Value>, String> {
 fn write_jsonl(path: &Path, lines: &[Value]) -> Result<(), String> {
     let body: String = lines.iter().map(|l| l.to_string() + "\n").collect();
     fs::write(path, body).map_err(|e| format!("{}: {e}", path.display()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Each demo fixture must sniff as its own tool and import with the planted content intact.
+    #[test]
+    fn fixtures_import() {
+        for (tool, path, marker) in [
+            (&ClaudeCode as &dyn Tool, "demo/claude-session.jsonl", "FizzBuzz"),
+            (&Codex, "demo/codex-session.jsonl", "Context handed off"),
+            (&GrokBuild, "demo/grok-session/chat_history.jsonl", "GUAVA-99"),
+        ] {
+            let lines = read_lines(Path::new(path)).unwrap();
+            assert!(tool.sniff(&lines[..lines.len().min(5)]), "{path} failed sniff");
+            let t = tool.import(Path::new(path)).unwrap();
+            assert!(!t.msgs.is_empty(), "{path}: no messages");
+            assert!(
+                t.msgs.iter().any(|m| m.text.contains(marker)),
+                "{path}: marker '{marker}' lost in import"
+            );
+        }
+    }
+
+    // A fixture must never sniff as a different tool (direction detection depends on it).
+    #[test]
+    fn sniff_is_unambiguous() {
+        for path in [
+            "demo/claude-session.jsonl",
+            "demo/codex-session.jsonl",
+            "demo/grok-session/chat_history.jsonl",
+        ] {
+            let lines = read_lines(Path::new(path)).unwrap();
+            let head = &lines[..lines.len().min(5)];
+            let matches: Vec<_> =
+                tools().into_iter().filter(|t| t.sniff(head)).map(|t| t.name()).collect();
+            assert_eq!(matches.len(), 1, "{path} sniffed as {matches:?}");
+        }
+    }
+
+    #[test]
+    fn grok_cwd_encoding_round_trips() {
+        let cwd = "/Users/dev/My Projects/app";
+        assert_eq!(urldecode(&urlencode(cwd)), cwd);
+        assert_eq!(urlencode("/tmp/x"), "%2Ftmp%2Fx");
+    }
 }
 
 fn cap(mut s: String) -> String {
@@ -428,6 +485,163 @@ impl Codex {
         }
         None
     }
+}
+
+// ---------- Grok Build ----------
+// Format (from xai-org/grok-build sources, chat_format_version 1):
+//   ~/.grok/sessions/{urlencode(cwd)}/{session_id}/chat_history.jsonl  - ConversationItem per line
+//   .../summary.json                                                   - session metadata
+// Lines: {"type":"user","content":[{"type":"text","text":..}]},
+//        {"type":"assistant","content":"..","tool_calls":[{id,name,arguments}]},
+//        {"type":"tool_result","tool_call_id":..,"content":".."}
+
+struct GrokBuild;
+
+impl Tool for GrokBuild {
+    fn name(&self) -> &'static str {
+        "grok"
+    }
+
+    fn root(&self) -> PathBuf {
+        home().join(".grok/sessions")
+    }
+
+    // Only chat_history.jsonl is the transcript; updates/feedback/btw_history are not.
+    fn sessions(&self) -> Vec<PathBuf> {
+        let mut v = Vec::new();
+        find_jsonl(&self.root(), "chat_history", &mut v);
+        v
+    }
+
+    // Grok lines are bare ConversationItems: a "type" of user/assistant/tool_result
+    // with no claude "sessionId" or codex "payload" envelope.
+    fn sniff(&self, lines: &[Value]) -> bool {
+        lines.iter().any(|l| {
+            matches!(
+                l.get("type").and_then(Value::as_str),
+                Some("user" | "assistant" | "tool_result" | "system")
+            ) && l.get("sessionId").is_none()
+                && l.get("payload").is_none()
+        })
+    }
+
+    fn import(&self, path: &Path) -> Result<Transcript, String> {
+        let dir = path.parent().ok_or("chat_history.jsonl has no parent dir")?;
+        let source_id = dir
+            .file_name()
+            .map(|n| n.to_string_lossy().to_string())
+            .unwrap_or_else(|| "?".into());
+        // cwd from summary.json; fall back to percent-decoding the parent dir name.
+        let cwd = fs::read_to_string(dir.join("summary.json"))
+            .ok()
+            .and_then(|s| serde_json::from_str::<Value>(&s).ok())
+            .and_then(|s| s["info"]["cwd"].as_str().map(str::to_string))
+            .or_else(|| dir.parent()?.file_name().map(|n| urldecode(&n.to_string_lossy())))
+            .unwrap_or_else(|| ".".into());
+
+        let mut msgs = Vec::new();
+        for line in read_lines(path)? {
+            let Some((role, text)) = grok_item_text(&line) else { continue };
+            if text.trim().is_empty() {
+                continue;
+            }
+            msgs.push(Msg { role, text, ts: String::new() });
+        }
+        Ok(Transcript { source_tool: self.name(), source_id, cwd, msgs })
+    }
+
+    fn export(&self, t: &Transcript) -> Result<(PathBuf, String), String> {
+        let id = uuid::Uuid::new_v4().to_string();
+        let dir = self.root().join(urlencode(&t.cwd)).join(&id);
+        fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+
+        let lines: Vec<Value> = t
+            .msgs
+            .iter()
+            .map(|m| match m.role {
+                Role::User => json!({"type": "user",
+                    "content": [{"type": "text", "text": m.text}]}),
+                Role::Assistant => json!({"type": "assistant", "content": m.text}),
+            })
+            .collect();
+        write_jsonl(&dir.join("chat_history.jsonl"), &lines)?;
+
+        let ts = now_iso();
+        let summary = json!({
+            "info": {"id": id, "cwd": t.cwd},
+            "session_summary": format!("Imported from {} session {} by {ATTRIBUTION}", t.source_tool, t.source_id),
+            "created_at": ts, "updated_at": ts,
+            "num_messages": lines.len(), "num_chat_messages": lines.len(),
+            "current_model_id": "grok-4", "chat_format_version": 1,
+        });
+        fs::write(dir.join("summary.json"), summary.to_string()).map_err(|e| e.to_string())?;
+        // grok's export/discovery paths expect this file to exist; resume itself reads chat_history
+        fs::write(dir.join("updates.jsonl"), "").map_err(|e| e.to_string())?;
+
+        Ok((dir.join("chat_history.jsonl"), format!("cd {} && grok --resume {id}", t.cwd)))
+    }
+}
+
+// Flatten one grok ConversationItem to (role, text). None = skip (system, reasoning, ...).
+fn grok_item_text(l: &Value) -> Option<(Role, String)> {
+    match l.get("type").and_then(Value::as_str)? {
+        // synthetic_reason marks runtime-injected messages (reminders, compaction), not real input
+        "user" if l.get("synthetic_reason").is_none() => {
+            let text = l["content"]
+                .as_array()?
+                .iter()
+                .filter_map(|p| p["text"].as_str())
+                .collect::<Vec<_>>()
+                .join("\n");
+            Some((Role::User, text))
+        }
+        "assistant" => {
+            let mut text = l["content"].as_str().unwrap_or("").to_string();
+            for call in l["tool_calls"].as_array().unwrap_or(&Vec::new()) {
+                text.push_str(&format!(
+                    "\n[tool call: {}]\n{}",
+                    call["name"].as_str().unwrap_or("?"),
+                    cap(call["arguments"].as_str().unwrap_or("").to_string())
+                ));
+            }
+            Some((Role::Assistant, text))
+        }
+        "tool_result" => Some((
+            Role::User,
+            format!("[tool result]\n{}", cap(l["content"].as_str().unwrap_or("").to_string())),
+        )),
+        _ => None,
+    }
+}
+
+// Percent-encoding as grok's encode_cwd_dirname does (RFC 3986 unreserved kept).
+fn urlencode(s: &str) -> String {
+    s.bytes()
+        .map(|b| match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                (b as char).to_string()
+            }
+            _ => format!("%{b:02X}"),
+        })
+        .collect()
+}
+
+fn urldecode(s: &str) -> String {
+    let bytes = s.as_bytes();
+    let mut out = Vec::new();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'%' && i + 2 < bytes.len() {
+            if let Ok(b) = u8::from_str_radix(&s[i + 1..i + 3], 16) {
+                out.push(b);
+                i += 3;
+                continue;
+            }
+        }
+        out.push(bytes[i]);
+        i += 1;
+    }
+    String::from_utf8_lossy(&out).into_owned()
 }
 
 // Map a codex response_item payload to (role, flattened text). None = skip.

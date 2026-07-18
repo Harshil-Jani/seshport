@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 [![Built with Rust](https://img.shields.io/badge/built%20with-Rust-f59e0b?logo=rust)](https://www.rust-lang.org)
-[![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%E2%87%84%20Codex-8b5cf6)](#the-easy-way-seshport)
+[![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Grok%20Build-8b5cf6)](#how-to-use)
 [![GitHub stars](https://img.shields.io/github/stars/Harshil-Jani/seshport?style=social)](https://github.com/Harshil-Jani/seshport/stargazers)
 
 **Port your session between coding agents.** Type `/seshport` inside Claude Code or Codex,
@@ -44,14 +44,15 @@ planted in a Claude Code session was recalled by Codex after a `/seshport` round
 
 ## CLI usage
 
-Direction is auto-detected — a session always converts to the other tool.
+The source tool is always auto-detected; name the target (or omit it when only one
+target is possible).
 
 ```bash
-seshport claude                # newest Claude Code session -> Codex
-seshport codex                 # newest Codex session -> Claude Code
-seshport <session-id>          # found in any tool's sessions, converted to the other
-seshport <path.jsonl>          # format detected from file content
-seshport <session> <tool>      # explicit target, for when there are 3+ tools
+seshport <session-id> <tool>   # port any session to any tool (claude | codex | grok)
+seshport <session-id>          # auto: found in any tool, only one possible target
+seshport <path.jsonl> <tool>   # format detected from file content
+seshport claude codex          # newest Claude Code session -> Codex
+seshport grok claude           # newest Grok Build session -> Claude Code
 ```
 
 Each run prints the output path and the exact resume command:
@@ -66,8 +67,9 @@ Want to try without touching your real sessions? The demo transcripts from the G
 [`demo/`](demo/):
 
 ```bash
-seshport demo/codex-session.jsonl    # -> claude --resume <id>
-seshport demo/claude-session.jsonl   # -> codex resume <id>
+seshport demo/codex-session.jsonl claude          # -> claude --resume <id>
+seshport demo/claude-session.jsonl grok           # -> grok --resume <id>
+seshport demo/grok-session/chat_history.jsonl codex   # -> codex resume <id>
 ```
 
 ## Architecture
@@ -89,10 +91,12 @@ tools cost 2·N converters instead of N². The diagram is editable: open
   rejects sessions without the official instructions.
 - Every import starts with an attribution message noting the source session and this tool.
 
-## Adding a tool
+## Add your editor — PRs welcome
 
-Implement the `Tool` trait in `src/main.rs` (five methods: `name`, `root`, `sniff`, `import`,
-`export`) and add it to `tools()`. Nothing else changes — integrations stay independent.
+Every integration is one `Tool` impl (five methods) plus a demo fixture — see
+[CONTRIBUTING.md](CONTRIBUTING.md) for the step-by-step guide, and
+[PR #1](https://github.com/Harshil-Jani/seshport/pull/1) (Grok Build) for a worked example
+you can copy.
 
 ## License
 
